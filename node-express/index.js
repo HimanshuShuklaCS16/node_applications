@@ -5,27 +5,10 @@ const port=3000;
 const app=express();
 const morgan=require("morgan");
 const bodyParser = require("body-parser");
+const dishRouter = require("./routes/dishRoute");
 
-app.use(bodyParser.json());
+app.use('/dishes',dishRouter);
 
-app.all('/dishes',(req,res,next) => {
-    res.statusCode = 200;
-    res.setHeader('content-Type','text/plain');
-    next();
-});
-app.get('/dishes',(req,res,next) => {
-    res.end("will send all the dishes to you");
-});
-app.post('/dishes',(req,res,next) => {
-    res.end("will add dish with name : " + req.body.name + " and description " + req.body.description);
-});
-app.put('/dishes',(req,res,next) => {
-    res.statusCode = 403;
-    res.end("put operation not allowed on /dishes");
-});
-app.delete('/dishes',(req,res,next) => {
-    res.end("will delete all the dishes !!");
-});
 
 app.all('/dishes/:dishid',(req,res,next) => {
     res.statusCode = 200;
