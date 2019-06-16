@@ -6,8 +6,15 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var dishRouter= require('./routes/dishRoute');
+var leaderRouter= require('./routes/leaderRouter');
+var promoRouter= require('./routes/promoRouter');
 
 var app = express();
+
+app.use('/',dishRouter);
+app.use('/',leaderRouter);
+app.use('/',promoRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
