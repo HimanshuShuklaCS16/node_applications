@@ -3,24 +3,29 @@ const assert = require('assert');
 
 const url = "mongodb://localhost:27017/";
 const dbname = "conFusion";
+const dboper = require("./operations.js");
 
 mongoclient.connect(url,(err,client) => {
     assert.equal(err,null);
     console.log("connected correctly to the server");
     const db = client.db(dbname);
-    const collection = db.collection("dishes");
-    collection.insertOne({"name":"uthapizza revived","description":"this is revived uthapizza"},(err,result) => {
-        assert.equal(err,null);
-        console.log("after insert :\n");
-        console.log(result.ops);
-        collection.find({}).toArray((err,docs) => {
-            assert.equal(err,null);
-            console.log("found:\n");
-            console.log(docs);
-            db.dropCollection("dishes",(err,result) =>{
-                assert.equal(err,null);
-                client.close();
+    dboper.insertDocument(db,{name:"test",description : "test description"},"dishes",(result)  => {
+        console.log("insert document: \n",result.ops);
+        dboper.findDocuments(db,"dishes",(docs) => {
+            console.log("found documents: \n",docs);
+            dboper.updateDocument(db,{name:"test"},{name:"uthapizza"},"dishes",(result) => {
+                console.log("updated document: \n",result.result);
+                dboper.findDocuments(db,"dishes",(docs) => {
+                    console.log("found updated documents:\n",docs);
+                    db.dropCollection("dishes",(result) => {
+                        console.log("dropped collection ",result);
+                        client.close();
+                    });
             });
         });
-    });
 });
+});
+
+
+ });
+ 
