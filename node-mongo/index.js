@@ -5,27 +5,30 @@ const url = "mongodb://localhost:27017/";
 const dbname = "conFusion";
 const dboper = require("./operations.js");
 
-mongoclient.connect(url,(err,client) => {
-    assert.equal(err,null);
+mongoclient.connect(url).then((client) => {
     console.log("connected correctly to the server");
     const db = client.db(dbname);
-    dboper.insertDocument(db,{name:"test",description : "test description"},"dishes",(result)  => {
+    dboper.insertDocument(db,{name:"new",description : "test description"},"dishes")
+    .then((result)  => {
         console.log("insert document: \n",result.ops);
-        dboper.findDocuments(db,"dishes",(docs) => {
+        return  dboper.findDocuments(db,"dishes");
+    })
+    .then((docs) => {
             console.log("found documents: \n",docs);
-            dboper.updateDocument(db,{name:"test"},{name:"uthapizza"},"dishes",(result) => {
+            return dboper.updateDocument(db,{name:"new"},{description:"updated description"},"dishes");
+    })
+    .then((result) => {
                 console.log("updated document: \n",result.result);
-                dboper.findDocuments(db,"dishes",(docs) => {
+                return dboper.findDocuments(db,"dishes");
+    })
+    .then((docs) => {
                     console.log("found updated documents:\n",docs);
-                    db.dropCollection("dishes",(result) => {
+                    return db.dropCollection("dishes");
+    })
+    .then((result) => {
                         console.log("dropped collection ",result);
-                        client.close();
-                    });
-            });
-        });
-});
-});
-
-
- });
- 
+                        return client.close();
+                    })
+                    .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
