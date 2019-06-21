@@ -7,16 +7,27 @@ const connect = mongoose.connect(url);
 connect.then((db) => {
     console.log('connected correctly to the server');
     Dishes.create({
-        name : 'uthapizza',
+        name : ' uthapizza',
         description : 'test'
     })
     .then((dish) => {
             console.log(dish);
-            return Dishes.find({}).exec();
+            return Dishes.findByIdAndUpdate(dish._id,{
+                $set: {description : 'updated test'}
+            },{new : true}).exec();
         })
-        .then((dishes) => {
-            console.log("all the dishes \n",dishes);
-            return Dishes.remove({});
+        .then((dish) => {
+            console.log("the updated dish is \n",dish);
+            dish.comment.push({
+                rating : 3,
+                comment : 'its awesome man !!',
+                author : 'Himanshu Shukla'
+            });
+            return dish.save();
+        })
+        .then((dish) => {
+            console.log('dish with comment is',dish);
+            return dish.remove({});
         })
         .then(() => {
             return mongoose.connection.close();
