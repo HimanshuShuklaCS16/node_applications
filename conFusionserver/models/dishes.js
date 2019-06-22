@@ -54,7 +54,7 @@ featured: {
     type:Boolean,
     default : false
     },
-   comment: [commentSchema]
+   comments: [commentSchema]
 },
    {
        timestamps : true
