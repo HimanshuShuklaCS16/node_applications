@@ -16,25 +16,22 @@ var usersRouter = require('./routes/users');
 var dishRouter= require('./routes/dishRoute');
 var leaderRouter= require('./routes/leaderRouter');
 var promoRouter= require('./routes/promoRouter');
-
+var session = require('express-session');
+var fileStore = require('session-file-store')(session);
 var app = express();
 
-app.use('/',dishRouter);
-app.use('/',leaderRouter);
-app.use('/',promoRouter);
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser('12345-67891-23412-76754'));
-
+//app.use(cookieParser('12345-67891-23412-76754'));
+app.use(session({
+  name : 'session-id',
+  secret : '12345-67891-23412-76754',
+  saveUninitialized : false ,
+  resave : false ,
+  store : new fileStore()
+  }));//session created with a session id
+  
 function auth(req,res,next){
-  console.log(req.signedCookies);
-if(!req.signedCookies.user){
+  console.log(req.session);
+if(!req.session.user){
   var authheader = req.headers.authorization;
   if(!authheader)
   {
@@ -49,7 +46,8 @@ if(!req.signedCookies.user){
   var password = auth[1];
   if(username == 'admin' && password == 'password')
   {
-    res.cookie('user','admin',{signed: true});//set up cookie
+    //res.cookie('user','admin',{signed: true});//set up cookie
+    req.session.user = 'admin';
     next(); //authorized
   }
   else{
@@ -61,8 +59,9 @@ if(!req.signedCookies.user){
   }
 }
 else{
-      if(req.signedCookies.user === 'admin')
+      if(req.session.user === 'admin')
           {
+              console.log('request session :',req.session);
               next();
           } 
           else{
@@ -75,6 +74,19 @@ else{
   
 }
 app.use(auth);
+app.use('/',dishRouter);
+app.use('/',leaderRouter);
+app.use('/',promoRouter);
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
