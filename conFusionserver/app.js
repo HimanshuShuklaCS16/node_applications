@@ -29,49 +29,27 @@ app.use(session({
   store : new fileStore()
   }));//session created with a session id
   
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
 function auth(req,res,next){
   console.log(req.session);
 if(!req.session.user){
-  var authheader = req.headers.authorization;
-  if(!authheader)
-  {
     var err = new Error('You are not authenticated!!');
-    res.setHeader('WWW-Authenticate','Basic');
-    err.status = 401;
-    next(err);
-    return;
-  }
-  var auth = new Buffer.from(authheader.split(' ')[1],'base64').toString().split(':');
-  var username = auth[0];
-  var password = auth[1];
-  if(username == 'admin' && password == 'password')
-  {
-    //res.cookie('user','admin',{signed: true});//set up cookie
-    req.session.user = 'admin';
-    next(); //authorized
-  }
-  else{
-    var err = new Error('You are not authenticated!!');
-    res.setHeader('WWW-Authenticate','Basic');
-    err.status = 401;
-    next(err);
-    return;
-  }
+    err.status = 403;
+    return next(err);
 }
 else{
-      if(req.session.user === 'admin')
+      if(req.session.user === 'authenticated')
           {
-              console.log('request session :',req.session);
               next();
           } 
           else{
             var err = new Error('You are not authenticated!!');
-            err.status = 401;
-            next(err)
+            err.status = 403;
+            return next(err)
           }
-}
-  
-  
+} 
 }
 app.use(auth);
 app.use('/',dishRouter);
@@ -89,8 +67,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
