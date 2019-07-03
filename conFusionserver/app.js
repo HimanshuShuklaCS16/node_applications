@@ -5,7 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
 const dishes = require('./models/dishes');
-const url = 'mongodb://localhost:27017/conFusion';
+var config = require('./config');
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 connect.then((db) => {
   console.log('connected correctly to the server!!');
@@ -25,31 +26,20 @@ var app = express();
 
 
 //app.use(cookieParser('12345-67891-23412-76754'));
-app.use(session({
+/*app.use(session({
   name : 'session-id',
   secret : '12345-67891-23412-76754',
   saveUninitialized : false ,
   resave : false ,
   store : new fileStore()
   }));//session created with a session id
-  app.use(passport.initialize());
   app.use(passport.session());
-  
+  */
+app.use(passport.initialize());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-function auth(req,res,next){
-  console.log(req.user);
-if(!req.user){
-    var err = new Error('You are not authenticated!!');
-    err.status = 403;
-    return next(err);
-}
-else{
-     next();
-} 
-}
-app.use(auth);
+
 app.use('/',dishRouter);
 app.use('/',leaderRouter);
 app.use('/',promoRouter);
