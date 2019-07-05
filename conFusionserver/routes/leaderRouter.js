@@ -17,7 +17,7 @@ leaderRouter.route('/leaders')
     },(err) => {console.log(err)})
     .catch((err) => {console.log(err)})
 })
-.post(authenticate.verifyUser,(req,res,next) => {
+.post(authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) => {
     leaders.create(req.body)
     .then((leader) =>{
         console.log("leader created :",leader);
@@ -27,11 +27,11 @@ leaderRouter.route('/leaders')
     },(err) => {console.log(err)})
     .catch((err) => {console.log(err)})
 })
-.put(authenticate.verifyUser,(req,res,next) => {
+.put(authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) => {
     res.statusCode = 403;
     res.end("put operation not allowed on /leaders");
 })
-.delete(authenticate.verifyUser,(req,res,next) => {
+.delete(authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) => {
     leaders.remove(() => {})
     .then((resp) => {
         res.statusCode =200;

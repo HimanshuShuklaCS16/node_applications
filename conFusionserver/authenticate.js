@@ -30,6 +30,19 @@ exports.jwtPassport = passport.use(new jwtStrategy(opts,
         });
     }));
     exports.verifyUser = passport.authenticate('jwt',{session : false});
+
+    exports.verifyAdmin = (req,res,next) => {
+if(req.user.admin === true)
+    return next();
+else
+{
+    err = new Error('You are not authorized');
+    err.status = 403;
+    return next(err);
+}
+    }
+
+    
  
 passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
