@@ -20,10 +20,21 @@ var usersRouter = require('./routes/users');
 var dishRouter= require('./routes/dishRoute');
 var leaderRouter= require('./routes/leaderRouter');
 var promoRouter= require('./routes/promoRouter');
+var uploadRouter= require('./routes/uploadRouter');
+
 var session = require('express-session');
 var fileStore = require('session-file-store')(session);
 var app = express();
 
+app.all('*',(req,res,next) => {
+  if(req.secure)
+  {
+    return next();
+  }
+  else{
+    res.redirect(307,'https://' + req.hostname + ':' +app.get('secport') + req.url)
+  }
+});
 
 //app.use(cookieParser('12345-67891-23412-76754'));
 /*app.use(session({
@@ -43,6 +54,7 @@ app.use('/users', usersRouter);
 app.use('/',dishRouter);
 app.use('/',leaderRouter);
 app.use('/',promoRouter);
+app.use('/imageUpload',uploadRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
