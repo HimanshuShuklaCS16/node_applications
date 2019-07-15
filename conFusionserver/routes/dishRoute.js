@@ -12,7 +12,7 @@ dishRouter.route('/dishes')
     res.sendStatus(200);
 })
 .get(cors.cors,(req,res,next) => {
-    dishes.find({})
+    dishes.find(req.query)
     .populate('comments.author')
     .then((dishes) => {
         res.statusCode =200;

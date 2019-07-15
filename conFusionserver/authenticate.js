@@ -8,7 +8,7 @@ var jwt = require('jsonwebtoken');//used to create,sign amd verify tokens
 var config = require('./config.js');
 
 exports.getToken = (user) => {
-    return jwt.sign(user,config.secretKey,{expiresIn: 3600 });
+    return jwt.sign(user,config.secretKey,{expiresIn: 36000 });
 };
 
 var opts ={};

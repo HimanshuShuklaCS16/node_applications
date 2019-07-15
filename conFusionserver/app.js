@@ -21,6 +21,7 @@ var dishRouter= require('./routes/dishRoute');
 var leaderRouter= require('./routes/leaderRouter');
 var promoRouter= require('./routes/promoRouter');
 var uploadRouter= require('./routes/uploadRouter');
+var favoriteRouter= require('./routes/favoriteRouter');
 
 var session = require('express-session');
 var fileStore = require('session-file-store')(session);
@@ -55,6 +56,7 @@ app.use('/',dishRouter);
 app.use('/',leaderRouter);
 app.use('/',promoRouter);
 app.use('/imageUpload',uploadRouter);
+app.use('/',favoriteRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
